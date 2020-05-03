@@ -169,7 +169,7 @@ namespace iTunesSearch.Library
         {
             var nvc = HttpUtility.ParseQueryString(string.Empty);
 
-            nvc.Add("id", artistId.ToString());            
+            nvc.Add("id", artistId.ToString());
 
             //  Construct the url:
             string apiUrl = string.Format(_baseLookupUrl, nvc.ToString());
@@ -384,7 +384,11 @@ namespace iTunesSearch.Library
         /// <returns></returns>
         async private Task<T> MakeAPICall<T>(string apiCall)
         {
-            HttpClient client = new HttpClient();
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+            // Pass the handler to httpclient(from you are calling api)
+            HttpClient client = new HttpClient(clientHandler);
 
             //  Make an async call to get the response
             var objString = await client.GetStringAsync(apiCall).ConfigureAwait(false);
